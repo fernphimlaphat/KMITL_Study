@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+
+<head></head>
+
+<body>
+    <div id="maincontainer"></div>
+    <script>
+        //DOM โครงสร้าง Doc เป็นแบบ tree
+
+        // ใช้ภายใน Js ประกาศซ้ำไม่ได้ เป็น pointer ชี้ไปที่ element นั้นไม่ควรประกาศซ้ำ
+        let Body = document.getElementById("maincontainer")
+
+        // สร้าง element h2
+        var HeadElement = document.createElement("h2") //สร้าง element h1
+        var HeadText = document.createTextNode("Exercise 04 : JavaScript&DOM") // สร้าง text node และใส่คำลงไป
+        HeadElement.appendChild(HeadText) //ให้ element h1 มีลูกเป็น text node ที่สร้าง
+        Body.appendChild(HeadElement) //ให้ body มีลูกเป็น h1
+
+        // สร้าง div ครอบ
+        var divButtonDate = document.createElement("div");
+        // สร้าง button date
+        var buttonElement = document.createElement("button")
+        buttonElement.setAttribute("id", "ButtonDate")
+        var buttonText = document.createTextNode("Click me to display Date and Time")
+        buttonElement.appendChild(buttonText)
+        divButtonDate.appendChild(buttonElement);
+        Body.appendChild(divButtonDate)
+
+        buttonElement.onclick = () => {
+            startWorker()
+        };
+
+        function Position(status) {
+            var button = document.getElementById("ButtonDate")
+            // positon บนขวา
+            if (status) {
+                button.style.position = "fixed"
+                button.style.right = "0"
+                button.style.top = "0"
+                button.style.width = "360px"
+                button.style.textAlign = "center"
+                button.style.border = "solid black"
+            }
+            else {
+                // positon เดิม
+                button.style.position = "static"
+            }
+        }
+
+        function startWorker() {
+            var button = document.getElementById("ButtonDate")
+            //เปลี่ยนตำแหน่ง
+            Position(1)
+
+            button.onclick = () => {
+                //คลิกตอน worker ทำงาน
+                Position(0)
+                stopWorker()
+                button.onclick = () => {
+                    //คลิกตอน worker ไม่ได้ทำงาน
+                    startWorker()
+                }
+            }
+
+            if (typeof worker == "undefined") {
+                //เช็ค เพื่อสร้าง worker (ถ้าไม่มี)
+                var worker = new Worker("worker.js")
+            }
+            worker.postMessage("start")
+            //Message สี bg
+            var bgColors = ["red", "darkgreen", "blue", "pink", "lawngreen", "aqua"]
+            //สี text
+            var colors = ["silver", "silver", "silver", "gray", "gray", "gray"]
+            var currentColor = 0;
+            //เปลี่ยนสี
+            function changeColor() {
+                for (var i = 0; i < 7; i++) {
+                    button.style.color = colors[(currentColor + i) % colors.length]
+                    button.style.backgroundColor = bgColors[(currentColor + i) % bgColors.length]
+                }
+                currentColor++
+            }
+            // แสดงสีก่อนครบ 1 วิ ก่อน (ไม่ต้องรอ 1 วิ เพื่อแสดงสี)
+            changeColor()
+            // set ให้มีการเปลี่ยนสีทุก 1 วินาที
+            var ChangeColor = setInterval(changeColor, 1000)
+
+            worker.addEventListener("message", (event) => { //function (event) {...}
+                //ภายใน button มี text  เป็นเวลาที่รับมาจาก work.js    
+                button.textContent = event.data;
+            });
+
+            // หยุดการทำงาน worker
+            function stopWorker() {
+                worker.postMessage("stop");
+                clearInterval(ChangeColor);
+            }
+        }
+
+        // สร้าง ตัวเว้นบรรทัด
+        var NextlineElement = document.createElement("br")
+        Body.appendChild(NextlineElement)
+
+        var NextlineElement = document.createElement("br")
+        Body.appendChild(NextlineElement)
+
+        // สร้าง button info
+        var buttonLinkElement = document.createElement("a")
+        buttonLinkElement.setAttribute("id", "Personal Info") //สร้าง Attribute id = Personal Info
+        var buttonLinkText = document.createTextNode("Personal Info")
+        buttonLinkElement.appendChild(buttonLinkText)
+        buttonLinkElement.style.textDecoration = "underline" //text-decoration : ตกแต่งให้มีขีดเส้นใต้ เหนือ หรือตรงกลางข้อความ
+        buttonLinkElement.href = "#" //ตัวลิงค์ link
+        buttonLinkElement.style.color = "plum" // set สี
+        Body.appendChild(buttonLinkElement)
+
+        // เงื่อนไขการ hover
+        var btnPersonInfo = document.getElementById("Personal Info")
+        btnPersonInfo.onmouseover = () => { //onmouseover = function () {...}
+            btnPersonInfo.style.color = "mediumblue"
+            btnPersonInfo.style.backgroundColor = "yellow"
+        }
+        // เงื่อนไขออกจาก hover
+        btnPersonInfo.onmouseout = () => { //onmouseout = function () {...}
+            btnPersonInfo.style.color = "plum"
+            btnPersonInfo.style.backgroundColor = "unset"
+        }
+
+        btnPersonInfo.onclick = () => { //onmouseout = function () {...}
+            ToggleInfo()
+        }
+
+        var NextlineElement = document.createElement("br")
+        Body.appendChild(NextlineElement)
+
+        // เงื่อนไข click
+        // div ครอบ infomation
+        var info = document.createElement("div")
+        info.setAttribute("id", "infomation")
+
+        // info ul
+        var infouUl = document.createElement("ul")
+
+        // info li 1
+        var infoList1 = document.createElement("li")
+        var infoList1Text = document.createTextNode("Phimlaphat Surayaem, ID : 63010690")
+        infoList1.appendChild(infoList1Text)
+        infouUl.appendChild(infoList1)
+
+        // info li 2
+        var infoList2 = document.createElement("li")
+        var infoList2Text = document.createTextNode("Subject : SOFTWARE STUDIO")
+        infoList2.appendChild(infoList2Text)
+        infouUl.appendChild(infoList2)
+
+        // info li 3
+        var infoList3 = document.createElement("li")
+        var infoList3Text = document.createTextNode("Semester : 1")
+        infoList3.appendChild(infoList3Text)
+        infouUl.appendChild(infoList3)
+
+        // appendChild
+        info.appendChild(infouUl)
+        Body.appendChild(info)
+
+        // กำหนด เงื่อนไข click
+        info.style.display = "none"
+        function ToggleInfo() {
+            var openInfo = document.getElementById("infomation")
+            if (openInfo.style.display == "none") {
+                openInfo.style.display = "block"
+            } else {
+                openInfo.style.display = "none"
+            }
+        }
+
+        // Snapshots
+        // div ครอบ Snapshots
+        var divSnap = document.createElement("div")
+
+        // h1
+        var headSnap = document.createElement("h1")
+        headSnap.innerText = "Snapshots" //ข้อความใน h1 เขียนแบบสั้น
+        divSnap.appendChild(headSnap)
+
+        // div ครอบ ul ของ snapshot
+        var ulSnap = document.createElement("ul")
+        divSnap.appendChild(ulSnap)
+
+        //li 1
+        var liSnap1 = document.createElement("li")
+        var liSnapLink1 = document.createElement("a")
+        liSnapLink1.innerText = "Fireworks"
+        liSnapLink1.href = "#"
+        liSnap1.appendChild(liSnapLink1)
+        ulSnap.appendChild(liSnap1)
+
+        // เงื่อนไขรูป li 1
+        liSnapLink1.onclick = () => {
+            var haveImg = document.getElementById("imgSnap")// หา id=imgSnap
+            if (haveImg) {
+                var imgParent = haveImg.parentNode; // หา parent
+                imgParent.removeChild(haveImg); // ให้ parent ลบ tag id = imgSnap  
+            }
+            // สร้างรูปใหม่ id เดิม
+            var img = document.createElement("img")
+            img.id = "imgSnap"
+            img.src = "https://cdn.britannica.com/82/203482-050-E2ABDA79/People-fireworks.jpg"
+            img.alt = "Fireworks"
+            img.height = "500";
+            divSnap.appendChild(img)
+        }
+
+        //li 2
+        var liSnap2 = document.createElement("li")
+        var liSnapLink2 = document.createElement("a")
+        liSnapLink2.innerText = "Crest"
+        liSnapLink2.href = "#"
+        liSnap2.appendChild(liSnapLink2)
+        ulSnap.appendChild(liSnap2)
+
+        // เงื่อนไขรูป li 2
+        liSnapLink2.onclick = () => {
+            var haveImg = document.getElementById("imgSnap")
+            if (haveImg) {
+                var imgParent = haveImg.parentNode; // หา parent
+                imgParent.removeChild(haveImg); // ให้ parent ลบ tag id = imgSnap  
+            }
+            var img = document.createElement("img")
+            img.id = "imgSnap"
+            img.src = "https://www.mycrest3d.com/wp-content/uploads/image/Crest-3dWhite-Luxe-Professional-Effects-1.jpg"
+            img.alt = "Crest"
+            img.width = "500";
+            divSnap.appendChild(img)
+
+        }
+
+        //li 3
+        var liSnap3 = document.createElement("li")
+        var liSnapLink3 = document.createElement("a")
+        liSnapLink3.innerText = "Action"
+        liSnapLink3.href = "#"
+        liSnap3.appendChild(liSnapLink3)
+        ulSnap.appendChild(liSnap3)
+
+        // เงื่อนไขรูป li 3
+        liSnapLink3.onclick = () => {
+            var haveImg = document.getElementById("imgSnap")
+            if (haveImg) {
+                var imgParent = haveImg.parentNode; // หา parent
+                imgParent.removeChild(haveImg); // ให้ parent ลบ tag id = imgSnap  
+            }
+            var img = document.createElement("img")
+            img.id = "imgSnap"
+            img.src = "https://www.theghanareport.com/wp-content/uploads/2023/04/action.jpg"
+            img.alt = "Action"
+            img.width = "500";
+            divSnap.appendChild(img)
+        }
+
+        //li 4
+        var liSnap4 = document.createElement("li")
+        var liSnapLink4 = document.createElement("a")
+        liSnapLink4.innerText = "Buffalo"
+        liSnapLink4.href = "#"
+        liSnap4.appendChild(liSnapLink4)
+        ulSnap.appendChild(liSnap4)
+
+        // เงื่อนไขรูป li 4
+        liSnapLink4.onclick = () => {
+            var haveImg = document.getElementById("imgSnap")
+            if (haveImg) {
+                var imgParent = haveImg.parentNode; // หา parent
+                imgParent.removeChild(haveImg); // ให้ parent ลบ tag id = imgSnap  
+            }
+            var img = document.createElement("img")
+            img.id = "imgSnap"
+            img.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/African_buffalo_%28Syncerus_caffer_caffer%29_male_with_cattle_egret.jpg/1280px-African_buffalo_%28Syncerus_caffer_caffer%29_male_with_cattle_egret.jpg"
+            img.alt = "Buffalo"
+            img.width = "500";
+            divSnap.appendChild(img)
+        }
+
+        // รูป default ส่วนท้าย
+        var img = document.createElement("img")
+        img.id = "imgSnap"
+        img.src = "https://www.youngciety.com/assets/images/article/draw-animals-for-kids/hedgehog-4.jpg"
+        img.alt = "เม่น"
+        img.width = "500";
+        divSnap.appendChild(img)
+        Body.appendChild(divSnap)
+    </script>
+</body>
+
+</html>
